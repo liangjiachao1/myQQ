@@ -10897,8 +10897,79 @@ module.exports = index_cjs;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../webpack/buildin/global.js */ 3)))
 
 /***/ }),
-/* 53 */,
-/* 54 */,
+/* 53 */
+/*!****************************************!*\
+  !*** E:/demo/myQQ/myQQ/store/store.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 25));
+var _vuex = _interopRequireDefault(__webpack_require__(/*! vuex */ 52));
+var _user = _interopRequireDefault(__webpack_require__(/*! ./user.js */ 54));
+_vue.default.use(_vuex.default);
+var store = new _vuex.default.Store({
+  modules: {
+    "m_user": _user.default
+  }
+});
+var _default = store;
+exports.default = _default;
+
+/***/ }),
+/* 54 */
+/*!***************************************!*\
+  !*** E:/demo/myQQ/myQQ/store/user.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = {
+  namespaced: true,
+  state: function state() {
+    return {
+      token: uni.getStorageSync('token') || '',
+      // user_avatarUrl,user_username
+      userinfo: JSON.parse(uni.getStorageSync('userinfo') || '{}')
+    };
+  },
+  mutations: {
+    updateToken: function updateToken(state, token) {
+      state.token = token;
+      this.commit('m_user/saveTokenToStorage');
+    },
+    saveTokenToStorage: function saveTokenToStorage(state) {
+      uni.setStorageSync('token', state.token);
+    },
+    updateUserInfo: function updateUserInfo(state, userinfo) {
+      state.userinfo = userinfo;
+      this.commit('m_user/saveUserInfoToStorage');
+    },
+    saveUserInfoToStorage: function saveUserInfoToStorage(state) {
+      uni.setStorageSync('userinfo', JSON.stringify(state.userinfo));
+    }
+  },
+  getters: {}
+};
+exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))
+
+/***/ }),
 /* 55 */,
 /* 56 */,
 /* 57 */,

@@ -1,17 +1,43 @@
 {
 	"pages": [{
-		"path": "pages/index/index",
-		"style": {
-			"navigationBarTitleText": "uni-app"
-		}
-	}],
+        "path" : "pages/message/message",
+        "style" :{}
+      },
+      {
+        "path" : "pages/contact/contact",
+        "style" : {}
+      },
+      {
+        "path" : "pages/my/my",
+        "style" : {}
+      }],
 	"globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8",
-		"app-plus": {
-			"background": "#efeff4"
-		}
-	}
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "myQQ",
+		"navigationBarBackgroundColor": "#00aaff",
+		"backgroundColor": "#ffffff"
+	},
+  "tabBar": {
+    "selectedColor": "#c00000",
+    "list": [
+      {
+        "pagePath" : "pages/message/message",
+        "text": "消息",
+        "iconPath": "/static/message1.png",
+        "selectedIconPath": "/static/message2.png"
+      },
+      {
+        "pagePath" : "pages/contact/contact",
+        "text":"联系人",
+        "iconPath": "/static/contact1.png",
+        "selectedIconPath": "static/contact2.png"
+      },
+      {
+        "pagePath": "pages/my/my",
+        "text": "我的",
+        "iconPath": "/static/my1.png",
+        "selectedIconPath": "static/my2.png"
+      }
+    ]
+  }
 }

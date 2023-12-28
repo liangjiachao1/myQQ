@@ -2,13 +2,23 @@
 // #ifndef VUE3
 import Vue from 'vue'
 import App from './App'
+import store from '@/store/store.js'
 
 Vue.config.productionTip = false
 
 App.mpType = 'app'
 
+uni.$showMsg=function(title='数据请求失败',duration=1500){
+  uni.showToast({
+    title,
+    duration,
+    icon:'none'
+  })
+}
+
 const app = new Vue({
-    ...App
+    ...App,
+    store
 })
 app.$mount()
 // #endif
