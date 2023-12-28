@@ -1,1 +1,1 @@
-<view class="my-message-box"></view>
+<view class="my-message-box"><image class="message-avatar" src="../../static/my1.png"></image><view class="message-name"><text class="name">毕业设计111111111111111111111111111111</text><text class="message-jieshuo">123455666666666666666666666666666666666666666666</text></view><view class="message-time-num"><text class="message-time">晚上6:45</text><text class="message-num">99+</text></view></view>
