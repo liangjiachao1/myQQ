@@ -77,8 +77,8 @@
       bottom: 0;
       right: 0;
       color:#fff;
-      padding: 0 5px;
-      border-radius: 40rpx;
+      padding: 0 6px;
+      border-radius: 60rpx;
       background-color: #c00000;
     }
   }
