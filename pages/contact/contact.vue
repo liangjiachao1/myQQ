@@ -1,7 +1,7 @@
 <template>
   <view>
     <!-- 搜索区域 -->
-    <my-search></my-search>
+    <my-search rule='contact'></my-search>
     
     <!-- 新朋友通知区域 -->
     <view class="newfriends-item">

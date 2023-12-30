@@ -1,6 +1,6 @@
 <template>
   <view class='search-box'>
-    <view class="search-item">
+    <view class="search-item" @click='gotoSearch'>
       <uni-icons type="search" size="16"></uni-icons>
       <text>搜索</text>
     </view>
@@ -10,10 +10,24 @@
 <script>
   export default {
     name:"my-search",
+    props:{
+      rule:{
+        type:String,
+        default:'message'
+      }
+    },
     data() {
       return {
         
       };
+    },
+    methods:{
+      gotoSearch(){
+        uni.navigateTo({
+          url:"/subpkg/user-search/user-search?rule="+this.rule,
+          
+        })
+      }
     }
   }
 </script>
@@ -32,6 +46,7 @@
     line-height: 40px;
     display: flex;
     justify-content: center;
+    border-radius: 5px;
   }
 }
 </style>

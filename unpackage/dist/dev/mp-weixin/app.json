@@ -8,7 +8,9 @@
     {
       "root": "subpkg",
       "pages": [
-        "user_chat/user_chat"
+        "user_chat/user_chat",
+        "user-search/user-search",
+        "user-detail/user-detail"
       ]
     }
   ],

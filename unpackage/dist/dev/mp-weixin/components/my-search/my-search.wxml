@@ -1,1 +1,1 @@
-<view class="search-box"><view class="search-item"><uni-icons vue-id="d033dda4-1" type="search" size="16" bind:__l="__l"></uni-icons><text>搜索</text></view></view>
+<view class="search-box"><view data-event-opts="{{[['tap',[['gotoSearch',['$event']]]]]}}" class="search-item" bindtap="__e"><uni-icons vue-id="d033dda4-1" type="search" size="16" bind:__l="__l"></uni-icons><text>搜索</text></view></view>

@@ -16,6 +16,18 @@
     "pages": [{
         "path" : "user_chat/user_chat",
         "style" :{}
+      },
+      {
+        "path" : "user-search/user-search",
+        "style" : {}
+      },
+      {
+        "path" : "user-detail/user-detail",
+        "style" : 
+        {
+          "navigationBarTitleText" : "",
+          "enablePullDownRefresh" : false
+        }
       }]
   }],
 	"globalStyle": {
