@@ -9,7 +9,7 @@
       "list": [
         {
           "name": "",
-          "pathName": "pages/contact/contact",
+          "pathName": "subpkg/user_chat/user_chat",
           "query": "",
           "launchMode": "default",
           "scene": null

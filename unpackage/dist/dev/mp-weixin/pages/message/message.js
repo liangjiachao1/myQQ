@@ -99,10 +99,10 @@ var components
 try {
   components = {
     mySearch: function () {
-      return __webpack_require__.e(/*! import() | components/my-search/my-search */ "components/my-search/my-search").then(__webpack_require__.bind(null, /*! @/components/my-search/my-search.vue */ 54))
+      return __webpack_require__.e(/*! import() | components/my-search/my-search */ "components/my-search/my-search").then(__webpack_require__.bind(null, /*! @/components/my-search/my-search.vue */ 64))
     },
     myMessage: function () {
-      return __webpack_require__.e(/*! import() | components/my-message/my-message */ "components/my-message/my-message").then(__webpack_require__.bind(null, /*! @/components/my-message/my-message.vue */ 61))
+      return __webpack_require__.e(/*! import() | components/my-message/my-message */ "components/my-message/my-message").then(__webpack_require__.bind(null, /*! @/components/my-message/my-message.vue */ 71))
     },
   }
 } catch (e) {
