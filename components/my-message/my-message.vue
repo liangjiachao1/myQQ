@@ -1,16 +1,18 @@
 <template>
-  <view class='my-message-box'>
-    <!-- 头像 -->
-    <image class='message-avatar' src='../../static/my1.png'></image>
-    <!-- 名字和消息 -->
-    <view class="message-name">
-      <text class="name">毕业设计111111111111111111111111111111</text>
-      <text class="message-jieshuo">123455666666666666666666666666666666666666666666</text>
-    </view>
-    <!-- 时间和条数-->
-    <view class="message-time-num">
-      <text class="message-time">晚上6:45</text>
-      <text class="message-num">99+</text>
+  <view>
+    <view class='my-message-box' @click='gotouserChat'>
+      <!-- 头像 -->
+      <image class='message-avatar' src='../../static/my1.png'></image>
+      <!-- 名字和消息 -->
+      <view class="message-name">
+        <text class="name">毕业设计111111111111111111111111111111</text>
+        <text class="message-jieshuo">123455666666666666666666666666666666666666666666</text>
+      </view>
+      <!-- 时间和条数-->
+      <view class="message-time-num">
+        <text class="message-time">晚上6:45</text>
+        <text class="message-num">99+</text>
+      </view>
     </view>
   </view>
 </template>
@@ -22,6 +24,13 @@
       return {
         
       };
+    },
+    methods:{
+      gotouserChat(){
+        uni.navigateTo({
+          url:"/subpkg/user_chat/user_chat"
+        })
+      }
     }
   }
 </script>

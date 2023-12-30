@@ -11,6 +11,13 @@
         "path" : "pages/my/my",
         "style" : {}
       }],
+  "subPackages":[{
+    "root": "subpkg",
+    "pages": [{
+        "path" : "user_chat/user_chat",
+        "style" :{}
+      }]
+  }],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "myQQ",
