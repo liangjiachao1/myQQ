@@ -10,7 +10,10 @@
       "pages": [
         "user_chat/user_chat",
         "user-search/user-search",
-        "user-detail/user-detail"
+        "user-detail/user-detail",
+        "user-update/user-update",
+        "user-add/user-add",
+        "user-add-friend/user-add-friend"
       ]
     }
   ],

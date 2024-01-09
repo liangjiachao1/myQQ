@@ -3,7 +3,7 @@ export default {
   
   state:()=>({
     token:uni.getStorageSync('token')||'',
-    // user_avatarUrl,user_username
+    // avatar,username,phone,signature,id
     userinfo:JSON.parse(uni.getStorageSync('userinfo')||'{}')
   }),
   
@@ -16,6 +16,15 @@ export default {
       uni.setStorageSync('token',state.token)
     },
     updateUserInfo(state,userinfo){
+      if(!userinfo.avatar) {
+        uni.base64ToPath(userinfo.avatar)
+          .then(path => {
+            userinfo.avatar=path
+          })
+          .catch(error => {
+            uni.showMsg(error)
+          })
+      }
       state.userinfo=userinfo
       this.commit('m_user/saveUserInfoToStorage')
     },

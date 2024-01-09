@@ -2,17 +2,12 @@
   <view>
     <!-- 消息区域 -->
     <view class='chat-message-box' @touchstart="touchStart" @touchend="touchEnd" :style='messagemarginbottom'>
-      <you-chat-message></you-chat-message>
-      <you-chat-message ismy='true'></you-chat-message>
-      <you-chat-message></you-chat-message>
-      <you-chat-message ismy='true'></you-chat-message>
-      <you-chat-message></you-chat-message>
-      <you-chat-message ismy='true'></you-chat-message>
-      <you-chat-message></you-chat-message>
-      <you-chat-message ismy='true'></you-chat-message>
+      <view v-for='(item) in chatDetail' :key='item.id'>
+        <you-chat-message :avatar='avatar' :chatmessage='item'></you-chat-message>
+      </view>
     </view>
     <!-- 输入框区域 -->
-    <chat-input @changeMarginBottom='changeMarginBottom' @changeCancellayer='changeCancellayer' :cancellayer='cancellayer'></chat-input>
+    <chat-input @sendMessage='sendMessage' @changeMarginBottom='changeMarginBottom' @changeCancellayer='changeCancellayer' :cancellayer='cancellayer'></chat-input>
   </view>
 </template>
 
@@ -23,20 +18,69 @@
         messagemarginbottom: 'padding-bottom: 100px;',
         touchStartX: 0, // 触屏起始点x  
         touchStartY: 0, // 触屏起始点y 
-        cancellayer:false  //用来告诉子组件关闭弹层
+        cancellayer:false  ,//用来告诉子组件关闭弹层
+        recipients:null,  //聊天方id
+        pagesize:10,   //获取聊天条数
+        pagenum:1,   //获取聊天页数
+        chatDetail:[],
+        avatar:null
       };
+    },
+    onLoad(options) {
+      this.recipients=options.id
     },
     onShow() {
       this.arriveBottom()
+      this.getChatDetail(0)
+      this.getavatar()
     },
-    computed: {},
+    // 下拉刷新
+    async onPullDownRefresh(){
+      this.pagenum+=1
+      await this.getChatDetail(1)
+      uni.stopPullDownRefresh()
+    },
     methods: {
+      // 发送信息
+      async sendMessage(message){
+        const {data}=await uni.$http.post('/user/chat/sendmessage',{
+          recipients:this.recipients,
+          message:message
+        })
+        if(data.status!==0) return uni.showMsg(data.message)
+        // 成功后重新获取数据
+        this.getChatDetail(0)
+        // 重新将视图拉到最底部
+        this.arriveBottom()
+      },
+      // 获取对面头像
+      async getavatar(){
+        const {data}=await uni.$http.get('/userinfo/friend?id='+this.recipients)
+        if(data.status!==0) return uni.showMsg(data.message)
+        this.avatar=data.data.avatar||'../../static/avatar.png'
+      },
+      // 调用接口，接收聊天详情
+      async getChatDetail(x){
+        const {data}=await uni.$http.get(`/user/chat/getdetail?recipients=${this.recipients}&pagesize=${this.pagesize}&pagenum=${this.pagenum}`)
+        if(data.status!==0) return uni.showMsg(data.message)
+        if(data.message==="已经到顶了") {
+          this.pagenum-=1
+          return uni.showMsg(data.message)
+        }
+        if(data.message==="没有找到相关聊天记录"){ return }
+        if(x===0) this.chatDetail=[...data.data,...this.chatDetail]
+        if(x===1) this.chatDetail=[...this.chatDetail,...data.data]
+        // 需要对chatDetail进行去重操作
+        this.chatDetail=this.chatDetail.filter((item,index)=>this.chatDetail.findIndex(item1=>item1.id===item.id)===index)
+        
+      },
       // 将视图移动到最底部
       arriveBottom() {
         this.$nextTick(() => {
-          uni.createSelectorQuery().select('.chat-message-box').boundingClientRect((res) => {
+          uni.createSelectorQuery().in(this).select('.chat-message-box').boundingClientRect((res) => {
+            console.log(res)
             uni.pageScrollTo({
-              scrollTop: res.height,
+              scrollTop: res.height + 100,
               duration: 0
             })
           }).exec() //注意：这里的exec()必须要写

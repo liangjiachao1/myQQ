@@ -2,16 +2,16 @@
   <view>
     <view class='my-message-box' @click='gotouserChat'>
       <!-- 头像 -->
-      <image class='message-avatar' src='../../static/my1.png'></image>
+      <image class='message-avatar' :src='imgUrl'></image>
       <!-- 名字和消息 -->
       <view class="message-name">
-        <text class="name">毕业设计111111111111111111111111111111</text>
-        <text class="message-jieshuo">123455666666666666666666666666666666666666666666</text>
+        <text class="name">{{message.username ||message.phone}}</text>
+        <text class="message-jieshuo">{{message.message[0].message}}</text>
       </view>
       <!-- 时间和条数-->
       <view class="message-time-num">
-        <text class="message-time">晚上6:45</text>
-        <text class="message-num">99+</text>
+        <text class="message-time">{{chattime}}</text>
+        <text class="message-num" v-if='message.noRead!==0'>{{message.noRead}}</text>
       </view>
     </view>
   </view>
@@ -20,15 +20,32 @@
 <script>
   export default {
     name:"my-message",
+    props:{
+      message:Object
+    },
     data() {
       return {
         
       };
     },
+    computed:{
+      chattime(){
+        const nowtime=new Date().getTime()
+        const messagetime=new Date(this.message.message[0].time).getTime()
+        if(nowtime-messagetime>1000*60*60*24) {
+          return this.message.message[0].time.split('T')[0]
+        }else{
+          return this.message.message[0].time.split('T')[1].split('.')[0].slice(0,5)
+        }
+      },
+      imgUrl(){
+        return this.message.avatar||"../../static/avatar.png"
+      }
+    },
     methods:{
       gotouserChat(){
         uni.navigateTo({
-          url:"/subpkg/user_chat/user_chat"
+          url:"/subpkg/user_chat/user_chat?id="+this.message.recipients
         })
       }
     }
@@ -49,10 +66,11 @@
   }
   
   .message-name{
-    width:470rpx;
+    width:420rpx;
     display: flex;
     flex-direction: column;
     line-height: 40rpx;
+    
     
     & text:first-child{
       font-size: 14px;
@@ -71,14 +89,16 @@
   
   .message-time-num{
     position: relative;
-    width:100rpx;
+    width:150rpx;
     display: flex;
     flex-direction: column;
     font-size: 12px;
-    line-height: 40rpx;
+    line-height: 20px;
     
     & text:first-child{
       color:gray;
+      white-space: nowrap;
+      text-align: right;
     }
     
     & text:nth-child(2){

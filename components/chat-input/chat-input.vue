@@ -2,7 +2,7 @@
   <view class="chat-input-box">
     <view class="input-top">
       <input type="text" v-model='inptext' />
-      <button size="mini">发送</button>
+      <button size="mini" @click="sendMessage">发送</button>
     </view>
     <view class="input-bottom">
       <uni-icons type="camera" size="30" @click='chooseImage'></uni-icons>
@@ -76,6 +76,11 @@
       }
     },
     methods:{
+      // 发送信息
+      sendMessage(){
+        this.$emit('sendMessage',this.inptext)
+        this.inptext=''
+      },
       expressionBoxShow(){
         this.expressionShow=!this.expressionShow
         this.fileShow=false

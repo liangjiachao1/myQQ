@@ -1,1 +1,1 @@
-<view><my-search vue-id="7ac9e6a0-1" bind:__l="__l"></my-search><my-message vue-id="7ac9e6a0-2" bind:__l="__l"></my-message></view>
+<view><my-search vue-id="7ac9e6a0-1" bind:__l="__l"></my-search><block wx:for="{{chatMessage}}" wx:for-item="item" wx:for-index="__i0__" wx:key="recipients"><view><my-message vue-id="{{'7ac9e6a0-2-'+__i0__}}" message="{{item}}" bind:__l="__l"></my-message></view></block></view>

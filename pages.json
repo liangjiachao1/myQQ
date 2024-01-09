@@ -1,11 +1,15 @@
 {
 	"pages": [{
         "path" : "pages/message/message",
-        "style" :{}
+        "style" :{
+          "enablePullDownRefresh": true
+        }
       },
       {
         "path" : "pages/contact/contact",
-        "style" : {}
+        "style" : {
+          "enablePullDownRefresh": true
+        }
       },
       {
         "path" : "pages/my/my",
@@ -15,7 +19,9 @@
     "root": "subpkg",
     "pages": [{
         "path" : "user_chat/user_chat",
-        "style" :{}
+        "style" :{
+          "enablePullDownRefresh": true
+        }
       },
       {
         "path" : "user-search/user-search",
@@ -23,9 +29,22 @@
       },
       {
         "path" : "user-detail/user-detail",
+        "style" : {}
+      },
+      {
+        "path" : "user-update/user-update",
+        "style" :{}
+      },
+      {
+        "path" : "user-add/user-add",
+        "style" : 
+        {}
+      },
+      {
+        "path" : "user-add-friend/user-add-friend",
         "style" : 
         {
-          "navigationBarTitleText" : "",
+          "navigationBarTitleText" : "添加好友",
           "enablePullDownRefresh" : false
         }
       }]

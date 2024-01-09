@@ -1,4 +1,5 @@
 {
+  "enablePullDownRefresh": true,
   "usingComponents": {
     "my-search": "/components/my-search/my-search",
     "my-message": "/components/my-message/my-message"

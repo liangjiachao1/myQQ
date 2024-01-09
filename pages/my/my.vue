@@ -5,9 +5,9 @@
       <!-- 头像和昵称区域 -->
       <view class="avatar-box">
         <button class="avatar-wrapper" open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
-          <image class="avatar" :src=' userinfo.user_avatarUrl||avatarUrl'></image>
+          <image class="avatar" :src='userinfo.user_avatar||avatarUrl'></image>
         </button>
-        <input type="nickname" class="weui-input" :value="userinfo.user_username" @blur="changeUserName" placeholder="请输入昵称" />
+        <input type="nickname" class="weui-input" v-model="username" @blur="changeUserName" placeholder="请输入昵称" />
       </view>
       <view class='set-box'>
         <!-- 好友动态 -->
@@ -17,11 +17,15 @@
           <text>好友动态</text>
           <uni-icons type="right" size="16"></uni-icons>
         </view>
-        <view class="set-item">
+        <view class="set-item" @click='gotoUpdate("signature")'>
+          <text>个性签名</text>
+          <uni-icons type="right" size="16"></uni-icons>
+        </view>
+        <view class="set-item" @click='gotoUpdate("password")'>
           <text>修改密码</text>
           <uni-icons type="right" size="16"></uni-icons>
         </view>
-        <view class="set-item">
+        <view class="set-item" @click='logout'>
           <text>退出登录</text>
           <uni-icons type="right" size="16"></uni-icons>
         </view>
@@ -33,11 +37,11 @@
     <view class="login-box" v-else>
       <image class='login-img' src="../../static/avatar.png"></image>
       <view class='login-form'>
-        <input type="text" v-model='phone' placeholder="请输入你的手机号" @blur="phoneRule"/>
+        <input type="text" v-model='phone' placeholder="请输入你的手机号" @blur="phoneRule" />
         <image src='../../static/error.png' v-show='phoneErr'></image>
       </view>
       <view class="login-form">
-        <input type="password" v-model='possword' placeholder="请输入你的密码" @blur="posswordRule">
+        <input type="password" v-model='password' placeholder="请输入你的密码" @blur="posswordRule">
         <image src='../../static/error.png' v-show='posswordErr'></image>
       </view>
       <button class='login-btn' type='primary' @click='clickLogin'>登录</button>
@@ -48,61 +52,133 @@
 
 <script>
   import {
-    mapState,mapMutations
+    mapState,
+    mapMutations
   } from 'vuex'
   export default {
     data() {
       return {
-        phone:'',
-        possword:'',
-        phoneErr:false,
-        posswordErr:false,
-        avatarUrl:'../../static/avatar.png',
+        phone: '',
+        password: '',
+        phoneErr: false,
+        posswordErr: false,
+        avatarUrl: '../../static/avatar.png',
+        username: JSON.parse(uni.getStorageSync('userinfo')||'{}').username || JSON.parse(uni.getStorageSync('userinfo')||'{}').phone
       };
     },
+    watch:{
+      watchuserinfo(newvalue){
+        this.username= newvalue.username || newvalue.phone
+      }
+    },
     computed: {
-      ...mapState('m_user', ['token','userinfo']),
+      ...mapState('m_user', ['token', 'userinfo']),
+      // 通过计算属性，间接监听vuex中数距的变化
+      watchuserinfo(){
+        return this.userinfo
+      },
     },
     methods: {
-      ...mapMutations('m_user',['updateToken','updateUserInfo']),
-      phoneRule(){
-        const reg=/^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/
-        if(!reg.test(this.phone)) {
-          this.phoneErr=true
+      ...mapMutations('m_user', ['updateToken', 'updateUserInfo']),
+      // 对手机号进行检验
+      phoneRule() {
+        const reg = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/
+        if (!reg.test(this.phone)) {
+          this.phoneErr = true
           uni.$showMsg('请输入正确的手机号！')
           return false
         }
-        this.phoneErr=false
+        this.phoneErr = false
         return true
       },
-      posswordRule(){
-        const reg=/^\S{8,16}$/
-        if(!reg.test(this.possword)) {
-          this.posswordErr=true
+      // 对密码进行检验
+      posswordRule() {
+        const reg = /^\S{8,16}$/
+        if (!reg.test(this.password)) {
+          this.posswordErr = true
           uni.$showMsg('请输入8到16位的非空字符！')
           return false
         }
-        this.posswordErr=false
+        this.posswordErr = false
         return true
       },
-      clickLogin(){
-        if(!this.phoneRule()||!this.posswordRule()){
-          return 
+      async clickLogin() {
+        if (!this.phoneRule() || !this.posswordRule()) {
+          return
         }
-        this.updateToken(''+this.phone+this.possword)
+        const query = {
+          phone: this.phone,
+          password: this.password
+        }
+        const {
+          data
+        } = await uni.$http.post('/api/login', query)
+        if (data.status !== 0) return uni.showMsg(data.message)
+        this.updateUserInfo(data.userinfo)
+        this.updateToken(data.token)
+        uni.showMsg('登录成功')
       },
-      onChooseAvatar(e){
-        if(e.detail.avatarUrl) this.updateUserInfo({
-          ...this.userinfo,
-          user_avatarUrl:e.detail.avatarUrl
+      async onChooseAvatar(e) {
+        if (e.detail.avatarUrl) {
+          uni.pathToBase64(e.detail.avatarUrl)
+            .then(async base64 => {
+              const res=await uni.$http.post('/updateinfo/updateavatar',{avatar:base64})
+              if(res.data.status!==0) return uni.showMsg(res.data.message)
+              this.updateUserInfo({
+                ...this.userinfo,
+                user_avatar: base64
+              })
+            })
+            .catch(error => {
+              uni.showMsg(error)
+            })
+        }
+      },
+      async changeUserName(e) {
+        if (e.detail.value === this.userinfo.username) return
+        if (e.detail.value === '') return this.username = this.userinfo.username
+
+        uni.showModal({
+          title: '提示',
+          content: '你确定要修改你的昵称吗',
+          success: async (res) => {
+            if (res.confirm) {
+              const res = await uni.$http.post('/updateinfo/updatename', {username: e.detail.value})
+              if (res.data.status !== 0) return uni.showMsg(res.data.message)
+              this.updateUserInfo({
+                ...this.userinfo,
+                username: this.username
+              })
+            } else if (res.cancel) {
+              this.username = this.userinfo.username
+            }
+          }
+        })
+
+
+      },
+      // 修改密码 
+      gotoUpdate(e){
+        uni.navigateTo({
+          url:'/subpkg/user-update/user-update?rule='+ e
         })
       },
-      changeUserName(e){
-        if(e.detail.value===this.userinfo.user_username) return 
-       
-        this.updateUserInfo({
-          ...this.userinfo,
-          user_username:e.detail.value
+      // 退出登录
+      logout(){
+        uni.showModal({
+          title: '提示',
+          content: '你确定要退出登录吗',
+          success:async (res)=> {
+            if(res.confirm){
+              const {data}= await uni.$http.post('/userinfo/logout')
+              if(data.status!==0) return uni.showMsg(data.message)
+              this.updateToken('')
+              this.updateUserInfo('')
+              uni.showMsg('退出成功')
+            }else if(res.cancel){
+              
+            }
+          }
         })
       }
     }
@@ -130,9 +206,9 @@
     }
 
     .weui-input {
-      width: 90px;
       height: 50px;
       color: gray;
+      padding: 0 10px;
       line-height: 50px;
       border-radius: 5px;
       text-align: center;
@@ -140,15 +216,15 @@
 
   }
 
-  .set-box{
-    
-    .set-item{
+  .set-box {
+
+    .set-item {
       display: flex;
       justify-content: space-between;
       padding: 10px 10px;
     }
   }
-  
+
   .login-box {
     width: 100%;
     padding: 50px 0;
@@ -161,13 +237,13 @@
       height: 90px;
       border-radius: 90px;
     }
-    
-    .login-form{
+
+    .login-form {
       display: flex;
       justify-content: space-between;
       flex-wrap: nowrap;
       align-items: center;
-      
+
       input {
         width: 350px;
         height: 50px;
@@ -176,18 +252,18 @@
         padding-left: 10px;
         margin-top: 15px
       }
-      
-      image{
+
+      image {
         float: left;
-        width:25px;
-        height:25px;
+        width: 25px;
+        height: 25px;
         margin-left: -25px;
         padding-top: 12px;
         padding-left: -5px;
       }
     }
 
-   
+
 
     .login-btn {
       height: 50px;

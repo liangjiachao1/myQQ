@@ -9,7 +9,7 @@
       "list": [
         {
           "name": "",
-          "pathName": "subpkg/user-detail/user-detail",
+          "pathName": "pages/contact/contact",
           "query": "",
           "launchMode": "default",
           "scene": null
