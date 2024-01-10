@@ -12,6 +12,7 @@
 </template>
 
 <script>
+  import {mapState} from 'vuex'
   export default {
     data() {
       return {
@@ -30,15 +31,24 @@
       this.recipients=options.id
     },
     onShow() {
-      this.arriveBottom()
       this.getChatDetail(0)
       this.getavatar()
+      this.arriveBottom()
+      uni.onSocketMessage(async (res) =>{
+        await this.getChatDetail(0)
+        this.$nextTick(() => {this.arriveBottom()})
+        
+      })
     },
     // 下拉刷新
     async onPullDownRefresh(){
       this.pagenum+=1
       await this.getChatDetail(1)
       uni.stopPullDownRefresh()
+    },
+    computed:{
+      ...mapState('m_user',['userinfo']),
+      ...mapState('m_chat',['chatMessage'])
     },
     methods: {
       // 发送信息
@@ -49,9 +59,18 @@
         })
         if(data.status!==0) return uni.showMsg(data.message)
         // 成功后重新获取数据
-        this.getChatDetail(0)
+        await this.getChatDetail(0)
         // 重新将视图拉到最底部
         this.arriveBottom()
+        // 将数据发送到websocket服务器上，用于即时通讯
+        const value={
+            id:this.userinfo.user_id,
+            friendid:this.recipients,
+            value:message
+          }
+        uni.sendSocketMessage({
+          data:JSON.stringify(value)
+        })
       },
       // 获取对面头像
       async getavatar(){
@@ -72,15 +91,13 @@
         if(x===1) this.chatDetail=[...this.chatDetail,...data.data]
         // 需要对chatDetail进行去重操作
         this.chatDetail=this.chatDetail.filter((item,index)=>this.chatDetail.findIndex(item1=>item1.id===item.id)===index)
-        
       },
       // 将视图移动到最底部
       arriveBottom() {
         this.$nextTick(() => {
-          uni.createSelectorQuery().in(this).select('.chat-message-box').boundingClientRect((res) => {
-            console.log(res)
+          uni.createSelectorQuery().select('.chat-message-box').boundingClientRect((res) => {
             uni.pageScrollTo({
-              scrollTop: res.height + 100,
+              scrollTop: res.height ,
               duration: 0
             })
           }).exec() //注意：这里的exec()必须要写

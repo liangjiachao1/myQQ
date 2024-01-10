@@ -58,6 +58,10 @@
     onShow() {
       this.getFriendClass()
       this.getNewFriendList()
+      uni.onSocketMessage(async (res) =>{
+        await this.getFriendClass()
+        
+      })
     },
     methods:{
       ...mapMutations('m_newfriend',['updataNewFriendsList']),

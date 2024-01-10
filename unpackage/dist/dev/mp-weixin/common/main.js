@@ -16,8 +16,8 @@ __webpack_require__(/*! uni-pages */ 26);
 var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 25));
 var _App = _interopRequireDefault(__webpack_require__(/*! ./App */ 27));
 var _store = _interopRequireDefault(__webpack_require__(/*! @/store/store.js */ 35));
-var _requestMiniprogram = __webpack_require__(/*! @escook/request-miniprogram */ 37);
-var _imageTools = __webpack_require__(/*! image-tools */ 38);
+var _requestMiniprogram = __webpack_require__(/*! @escook/request-miniprogram */ 38);
+var _imageTools = __webpack_require__(/*! image-tools */ 39);
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2.default)(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 // @ts-ignore
@@ -162,8 +162,13 @@ var _vuex = __webpack_require__(/*! vuex */ 33);
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2.default)(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 var _default = {
-  computed: _objectSpread({}, (0, _vuex.mapState)('m_user', ['token'])),
-  methods: {
+  data: function data() {
+    return {
+      socketOpen: false
+    };
+  },
+  computed: _objectSpread({}, (0, _vuex.mapState)('m_user', ['token', 'userinfo'])),
+  methods: _objectSpread(_objectSpread({}, (0, _vuex.mapMutations)('m_chat', ['updateChatMessage'])), {}, {
     // 页面一打开就发送一个无返回参数的网络请求，用于检测token是否过期
     detectToken: function detectToken() {
       var _this = this;
@@ -236,13 +241,57 @@ var _default = {
           }
         }, _callee3);
       }))();
+    },
+    // 页面进入，连接websocket
+    connSocket: function connSocket() {
+      var _this3 = this;
+      // 没有token，说明没有登录，就不需要链接websocket了
+      if (this.token === '') return;
+      uni.connectSocket({
+        url: 'ws://127.0.0.1:8001'
+      });
+      uni.onSocketOpen(function (res) {
+        console.log('WebSocket连接已打开！');
+        _this3.socketOpen = true;
+        var data = {
+          value: '用户加入聊天',
+          id: _this3.userinfo.user_id
+        };
+        if (_this3.socketOpen === true) {
+          uni.sendSocketMessage({
+            data: JSON.stringify(data)
+          });
+
+          // uni.onSocketMessage((res) =>{
+          //   console.log('收到服务器内容：' + res.data);
+          //   this.updateChatMessage(res.data)
+          // })
+        }
+      });
+
+      uni.onSocketError(function (res) {
+        _this3.socketOpen = false;
+        console.log('WebSocket连接打开失败，请检查！');
+      });
+    },
+    // 离开页面，断开websocket
+    disconnSocket: function disconnSocket() {
+      var _this4 = this;
+      uni.closeSocket();
+      uni.onSocketClose(function (res) {
+        _this4.socketOpen = false;
+        console.log('WebSocket 已关闭！');
+      });
     }
-  },
+  }),
   onShow: function onShow() {
-    this.detectToken(), this.showPage();
+    this.detectToken(), this.showPage(), this.connSocket();
   },
   onHide: function onHide() {
-    if (this.token !== '') this.hidePage();
+    if (this.token !== '') {
+      this.disconnSocket();
+      this.hidePage();
+    }
   }
 };
 exports.default = _default;

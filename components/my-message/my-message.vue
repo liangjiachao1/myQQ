@@ -5,7 +5,7 @@
       <image class='message-avatar' :src='imgUrl'></image>
       <!-- 名字和消息 -->
       <view class="message-name">
-        <text class="name">{{message.username ||message.phone}}</text>
+        <text class="name">{{username}}  </text>
         <text class="message-jieshuo">{{message.message[0].message}}</text>
       </view>
       <!-- 时间和条数-->
@@ -40,6 +40,10 @@
       },
       imgUrl(){
         return this.message.avatar||"../../static/avatar.png"
+      },
+      username(){
+        const name=this.message.username || this.message.phone
+        return name||'  '
       }
     },
     methods:{

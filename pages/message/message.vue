@@ -16,6 +16,10 @@
       },
       onShow(){
         this.getChatMessage()
+        uni.onSocketMessage(async (res) =>{
+          await this.getChatMessage()
+          
+        })
       },
       async onPullDownRefresh(){
         await this.getChatMessage()
