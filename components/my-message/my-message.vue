@@ -43,7 +43,7 @@
       },
       username(){
         const name=this.message.username || this.message.phone
-        return name||'  '
+        return name||'null'
       }
     },
     methods:{

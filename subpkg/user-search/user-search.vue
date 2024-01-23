@@ -1,9 +1,9 @@
 <template>
   <view>
-    <view class="">
+    <view>
       <!-- 搜索区域 -->
       <view class="user-search-bar">
-        <uni-search-bar v-model='searchValue' focus="true" @cancel='goBack'>
+        <uni-search-bar v-model='searchValue' :focus='true' @cancel='goBack'>
         </uni-search-bar>
       </view>  
       
@@ -71,7 +71,7 @@
 .user-search-bar{
   width:100%;
   position: fixed;
-  top:0;
+  top:45px;
   left:0;
   background-color: #fff;
 }

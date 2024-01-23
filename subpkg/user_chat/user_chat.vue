@@ -30,10 +30,10 @@
     onLoad(options) {
       this.recipients=options.id
     },
-    onShow() {
-      this.getChatDetail(0)
+    async onShow() {
+      await this.getChatDetail(0)
       this.getavatar()
-      this.arriveBottom()
+      this.$nextTick(() => {this.arriveBottom()})
       uni.onSocketMessage(async (res) =>{
         await this.getChatDetail(0)
         this.$nextTick(() => {this.arriveBottom()})

@@ -14,8 +14,8 @@
           chatMessage:[]
         }
       },
-      onShow(){
-        this.getChatMessage()
+      async onShow(){
+        await this.getChatMessage()
         uni.onSocketMessage(async (res) =>{
           await this.getChatMessage()
           
